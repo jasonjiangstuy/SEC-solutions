@@ -58,7 +58,7 @@ if can_fetchnycparks:
     CaseError(myPart(False, '<div class="cleardiv"></div>'))
 
     print("------ starting finding events from " + str(myUrl) + '-------')
-    print(nycparks)
+    #print(nycparks)
 
     EventDates = []
     while myPart(True, '<h2 id='): #while we can still find another event date
@@ -67,7 +67,9 @@ if can_fetchnycparks:
         print(date)
         EventDates.append([date])
 
+    print('all event dates:')
     print(EventDates)
+    print(len(EventDates))
 
 
 
