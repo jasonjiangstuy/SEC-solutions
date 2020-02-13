@@ -34,8 +34,8 @@ if can_fetchnycparks:
     #print(nycparks)
 
     def CaseError(Value):
-        if not Value[0]:
-            raise ValueError(str(Value[1]) + ' not found in: ' + str(myUrl))
+        if not Value:
+            raise ValueError('seperator not found in: ' + str(myUrl))
 
     def myPart(throwisleft, seperator):
         #print(myUrl)
@@ -43,25 +43,31 @@ if can_fetchnycparks:
         if throwisleft:
             if seperator in nycparks:
                 throw, throw, nycparks = nycparks.partition(seperator)
-                return([True])
+                return True
             else:
-                return False, seperator
+                return False
         if not throwisleft:
             if seperator in nycparks:
                 nycparks, throw, throw = nycparks.partition(seperator)
-                return([True])
+                return True
             else:
-                return False, seperator
+                return False
 
-    CaseError(myPart(True, 'Volunteer Events'))
+    #triming the total amount of source code to make the search functions faster
+    CaseError(myPart(True, '</h2><div id="catpage_events_list">'))
     CaseError(myPart(False, '<div class="cleardiv"></div>'))
 
     print("------ starting finding events from " + str(myUrl) + '-------')
     print(nycparks)
 
     EventDates = []
-    while '<h2' in nycparks:
-        throw, throw, nycparks = nycparks.partition('Volunteer Events')
+    while myPart(True, '<h2 id='): #while we can still find another event date
+        date, throw, nycparks = nycparks.partition('class="clearleft>"')
+        date.strip("\'")
+        print(date)
+        EventDates.append([date])
+
+    print(EventDates)
 
 
 
