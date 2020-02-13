@@ -60,17 +60,32 @@ if can_fetchnycparks:
     print("------ starting finding events from " + str(myUrl) + '-------')
     #print(nycparks)
 
+    def combinedStrip(subject):
+        x = subject.replace("\'", '')
+        x = subject.replace('\"', '')
+        x = subject.strip()
+        return x
+
     EventDates = []
     while myPart(True, '<h2 id='): #while we can still find another event date
-        date, throw, nycparks = nycparks.partition('class="clearleft>"')
-        date.strip("\'")
-        print(date)
-        EventDates.append([date])
+        date, throw, nycparks = nycparks.partition('class="clearleft">')
+        date = combinedStrip(date)
+        #print(date)
+        EventDates.append([date])#event date found
+
+        #get the link for event details
+
+        CaseError(myPart(True, '<a href='))
+        link, throw, nycparks = nycparks.partition('>')
+        link = combinedStrip(link)
+        EventDates[(len(EventDates) - 1)].append(link)
+
+
 
     print('all event dates:')
     print(EventDates)
     print(len(EventDates))
-
+    #print(combinedStrip(' "this is a test " '))
 
 
     # tagisfound = False
