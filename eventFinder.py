@@ -42,6 +42,7 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
 
 
     def myPart(throwisleft, seperator, string):
+        global activeURL
         #print(myUrl)
         x = string
         if throwisleft:
@@ -49,7 +50,6 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
                 throw, throw, x = x.partition(seperator) #if true get rid of the left side
                 return x
             else:
-                global activeURL
                 raise ValueError('seperator not found in: ' + str(activeURL))
 
         if not throwisleft:
@@ -57,7 +57,6 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
                 x, throw, throw = x.partition(seperator)
                 return x
             else:
-                global activeURL
                 raise ValueError('seperator not found in: ' + str(activeURL))
 
 
