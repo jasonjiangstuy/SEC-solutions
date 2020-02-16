@@ -10,7 +10,7 @@ import urllib.request, urllib.error
 import urllib.robotparser as robot
 
 
-
+activeURL = ""
 def canifetch(URL):
     reader = robot.RobotFileParser()
     reader.set_url(URL + '/robots.txt')
@@ -41,27 +41,6 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
     #print(nycparks)
 
 
-    def CaseError(Value):
-        if not Value:
-            raise ValueError('seperator not found in: ' + str(myUrl))
-
-
-    def myPart(throwisleft, seperator):
-        #print(myUrl)
-        global nycparks
-        if throwisleft:
-            if seperator in nycparks:
-                throw, throw, nycparks = nycparks.partition(seperator) #if true get rid of the left side
-                return True
-            else:
-                return False
-        if not throwisleft:
-            if seperator in nycparks:
-                nycparks, throw, throw = nycparks.partition(seperator)
-                return True
-            else:
-                return False
-
     def myPart(throwisleft, seperator, string):
         #print(myUrl)
         x = string
@@ -70,14 +49,16 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
                 throw, throw, x = x.partition(seperator) #if true get rid of the left side
                 return x
             else:
-                raise ValueError('seperator not found in: ' + str(myUrl))
+                global activeURL
+                raise ValueError('seperator not found in: ' + str(activeURL))
 
         if not throwisleft:
             if seperator in x:
                 x, throw, throw = x.partition(seperator)
                 return x
             else:
-                raise ValueError('seperator not found in: ' + str(myUrl))
+                global activeURL
+                raise ValueError('seperator not found in: ' + str(activeURL))
 
 
     #triming the total amount of source code to make the search functions faster
@@ -85,6 +66,7 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
     nycparks = myPart(False, '<div class="cleardiv"></div>', nycparks)
 
     print("------ starting finding events from " + str(myUrl) + '-------')
+    activeURL = myUrl
     #print(nycparks)
     #global myUrl
 
@@ -96,6 +78,15 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
             x = x.replace('\"', '')
             x = x.strip()
         return(x)
+    def betweenthetag(seperator, string, removefront=""):
+        x = string
+        x = myPart(True, seperator + removefront + '>', x)
+        between, throw, x = x.partition('</' + seperator + '>')
+        return(between, x)
+
+    def addEventDetail(detail):
+        global EventDates
+        EventDates[(len(EventDates) - 1)].append(detail)
 
     EventDates = []
     # from urllib.parse import urlsplit, urlunsplit
@@ -106,6 +97,7 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
     myBaseUrl = myBaseUrl[0 : myBaseUrl.rindex('/')]
 
     while '<h2 id=' in nycparks: #while we can still find another event date
+        activeURL = myUrl
         nycparks = myPart(True, '<h2 id=', nycparks)
         save, throw, nycparks = nycparks.partition('class="clearleft">')
         save = combinedStrip(save)
@@ -126,13 +118,34 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
         EventDates[(len(EventDates) - 1)].append(save)
 
             #scan the event website
-        #eventWebsite = urllib.request.urlopen(eventWebsiteLink).read().decode()
+        eventWebsite = urllib.request.urlopen(eventWebsiteLink).read()
+        eventWebsite = eventWebsite.decode()
+        print(eventWebsiteLink)
+        activeURL = eventWebsiteLink
         #print(eventWebsite)
 
+        #get link to add event to google calender
+        eventWebsite = myPart(True, 'Yahoo! Calendar</a></li><li>', eventWebsite)
+        eventWebsite = myPart(True, '<a href=', eventWebsite)
+        save, throw, eventWebsite = eventWebsite.partition('>')
+        save = combinedStrip(save)
+        EventDates[(len(EventDates) - 1)].append(save)
+
         #get starttime of event
-            #CaseError(myPart(True, '<p><strong>'))
+        #print(eventWebsite)
+        eventWebsite = myPart(True, '</p><p>', eventWebsite)
+        save, eventWebsite = betweenthetag('strong', eventWebsite)
+        print(save)
+        EventDates[(len(EventDates) - 1)].append(save)
+        #get endtime of event
+        save, eventWebsite = betweenthetag('strong', eventWebsite)
+        print(save)
+        EventDates[(len(EventDates) - 1)].append(save)
+
         #get blurb
-            #CaseError(myPart(True, '<div itemprop="description" class="description">'))
+        eventWebsite = myPart(True, '<div itemprop="description" class="description">', eventWebsite)
+        save, eventWebsite = betweenthetag('p', eventWebsite)
+        addEventDetail(save)
         #get note
 
         #get the location of the event
