@@ -1,0 +1,14 @@
+--
+
+MVP
+1) finish collecting all of the details of the child websites of nycparks
+
+2) add test for, if detail is present there, if there replace that item of list with "N/A"
+
+3) implement website to display info 
+
+    - build skelecton 
+    - build storage of found events (pickling)
+    - build button to rerun code
+
+4) show nour + SEC cab :p  by 2/20.

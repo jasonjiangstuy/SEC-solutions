@@ -134,21 +134,29 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
         #print(eventWebsite)
         eventWebsite = myPart(True, '</p><p>', eventWebsite)
         save, eventWebsite = betweenthetag('strong', eventWebsite)
-        print(save)
+        #print(save)
         EventDates[(len(EventDates) - 1)].append(save)
         #get endtime of event
         save, eventWebsite = betweenthetag('strong', eventWebsite)
-        print(save)
+        #print(save)
         EventDates[(len(EventDates) - 1)].append(save)
 
         #get blurb
         eventWebsite = myPart(True, '<div itemprop="description" class="description">', eventWebsite)
-        save, eventWebsite = betweenthetag('p', eventWebsite)
+        save = ""
+        eventWebsite = eventWebsite.lstrip()
+        #print(eventWebsite[0:3])
+        while eventWebsite[0:3] == "<p>":
+            hold, eventWebsite = betweenthetag('p', eventWebsite)
+            save = save + hold
+            eventWebsite = eventWebsite.lstrip()
+            #eventWebsite = eventWebsite.lstrip('\r\n')
         addEventDetail(save)
-        #get note
 
         #get the location of the event
-
+        eventWebsite = myPart(True, '<span class="map_locations" id=', eventWebsite)
+        save, throw, eventWebsite = eventWebsite.partition('>')
+        addEventDetail(save) #coord + location // fix tmr
         #get the coords of the events
 
         #get the name of the coordinator
@@ -157,11 +165,11 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
 
 
     print('all event dates:')
-    print(EventDates)
-    print(len(EventDates))
-    print(myBaseUrl)
-    for i in EventDates:
-        print(i)
+    #print(EventDates)
+    #print(len(EventDates))
+    #print(myBaseUrl)
+    #for i in EventDates:
+    #    print(i)
     print(EventDates[0])
     #print(combinedStrip(' "this is a test " '))
 
