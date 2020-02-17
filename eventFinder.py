@@ -123,22 +123,29 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
         activeURL = eventWebsiteLink
         #print(eventWebsite)
 
+        eventWebsite = myPart(True, 'Yahoo! Calendar</a></li><li>', eventWebsite) #getting to the specific a href tag
+
         #get link to add event to google calender
-        eventWebsite = myPart(True, 'Yahoo! Calendar</a></li><li>', eventWebsite)
-        eventWebsite = myPart(True, '<a href=', eventWebsite)
-        save, throw, eventWebsite = eventWebsite.partition('>')
-        save = combinedStrip(save)
+        save = ""
+        if '<a href=' in eventWebsite:
+            eventWebsite = myPart(True, '<a href=', eventWebsite)
+            save, throw, eventWebsite = eventWebsite.partition('>')
+            save = combinedStrip(save)
         EventDates[(len(EventDates) - 1)].append(save)
 
         #get starttime of event
         #print(eventWebsite)
+
         eventWebsite = myPart(True, '</p><p>', eventWebsite)
-        save, eventWebsite = betweenthetag('strong', eventWebsite)
-        #print(save)
-        EventDates[(len(EventDates) - 1)].append(save)
-        #get endtime of event
-        save, eventWebsite = betweenthetag('strong', eventWebsite)
-        #print(save)
+
+        save = ""
+        if 'strong' in eventWebsite:
+            save, eventWebsite = betweenthetag('strong', eventWebsite)
+            #print(save)
+            EventDates[(len(EventDates) - 1)].append(save)
+            #get endtime of event
+            save, eventWebsite = betweenthetag('strong', eventWebsite)
+            #print(save)
         EventDates[(len(EventDates) - 1)].append(save)
 
         #get blurb
@@ -153,24 +160,58 @@ if hold:#testing if we are allowed to robo request the nycgovparks website
             #eventWebsite = eventWebsite.lstrip('\r\n')
         addEventDetail(save)
 
-        #get the location of the event
-        eventWebsite = myPart(True, '<span class="map_locations" id=', eventWebsite)
-        save, throw, eventWebsite = eventWebsite.partition('>')
-        addEventDetail(save) #coord + location // fix tmr
-        #get the coords of the events
+        #get the location of the event + get the coords of the events
+        lat = ""
+        longitude = ""
+        address = ""
+        if 'strong' in eventWebsite:
+            eventWebsite = myPart(True, '<span class="map_locations" id=', eventWebsite)
+            save, throw, eventWebsite = eventWebsite.partition('>')
+            save = combinedStrip(save)
+            lat, longitude, address = save.split("__", 2) 
+        addEventDetail(lat) #coord + location // fix tmr
+        addEventDetail(longitude)
+        addEventDetail(address)
+        
+        eventWebsite = myPart(True, '<h3>Cost</h3>', eventWebsite)
+        
+        #get cost of event, should be 0 but u never know :P
+        save = ""
+        if '<p>' in eventWebsite:
+            save, eventWebsite = betweenthetag('p', eventWebsite)
+            addEventDetail(save)
+            #get the name of the coordinator
+            save, eventWebsite = betweenthetag('p', eventWebsite)
+        addEventDetail(save)
 
-        #get the name of the coordinator
+        #get the phone number of the coordinator
+        save = ""
+        if '<p>' in eventWebsite:
+            save, eventWebsite = betweenthetag('p', eventWebsite)
+        addEventDetail(save)
 
-        #get the email of the coordinator
+        #get the emaillink of the coordinator
+        save = ""
+        if '<a href=' in eventWebsite:
+            eventWebsite = myPart(True, '<a href=', eventWebsite)
+            save, throw, eventWebsite = eventWebsite.partition('>')
+            save = combinedStrip(save)
+        addEventDetail(save)
+
+        #get email of coordinator
+        save = ""
+        if '</a>' in eventWebsite:
+            save, throw, eventWebsite = eventWebsite.partition('</a>')
+        addEventDetail(save)
 
 
     print('all event dates:')
-    #print(EventDates)
-    #print(len(EventDates))
+    print(EventDates)
+    print(len(EventDates))
     #print(myBaseUrl)
     #for i in EventDates:
     #    print(i)
-    print(EventDates[0])
+    #int(EventDates[0])
     #print(combinedStrip(' "this is a test " '))
 
 
