@@ -1,9 +1,9 @@
 --
 
 MVP
-1) finish collecting all of the details of the child websites of nycparks--XXX
+1) finish collecting all of the details of the child websites of nycparks--2/16
 
-2) add test for, if detail is present there, if there replace that item of list with "N/A"--XXX
+2) add test for, if detail is present there, if there replace that item of list with "N/A"--2/17
 
 3) implement website to display info 
 
