@@ -1,5 +1,7 @@
-#format of the event element
-#[[date][website its from][name][linktoaddtogooglecalender][starttime][endtime][description][lat][long][locationname][price][organizername]
+#format of the event element:
+#[[date][website its from][name][linktoaddtogooglecalender][starttime]
+#[endtime][description][lat][long][locationname][price][organizername]
+#[phonenumber][email]]
 
 def allevents():
     events = []
@@ -195,9 +197,10 @@ def eventsfromnycparks():
                 save = save.lstrip('mailto:')
                 save = save.replace("&#x", "")
                 save = save.replace(";","")
+                save = save.replace('%', "")
+                print(save)
                 save = decode(decode(save, "hex"), 'ascii')
                 addEventDetail(save)
-                save = ""
             else:
                 addEventDetail(save)
             #get email of coordinator
