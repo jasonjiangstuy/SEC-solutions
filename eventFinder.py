@@ -69,8 +69,10 @@ def eventsfromnycparks():
 
         def combinedStrip(subject):
             x = subject
-            while x.startswith(('\"',"\'", " ")):
+            while x.startswith(('\"',"\'", " ", "<br />", "\n", "\r")):
                 #print(x)
+                x = x.replace("&nbsp;", "")
+                x = x.replace("<br />", "")
                 x = x.replace("\'", '')
                 x = x.replace('\"', '')
                 x = x.strip()
@@ -148,12 +150,11 @@ def eventsfromnycparks():
             #get blurb
             eventWebsite = myPart(True, '<div itemprop="description" class="description">', eventWebsite)
             save = ""
-            eventWebsite = eventWebsite.lstrip()
             #print(eventWebsite[0:3])
             while eventWebsite[0:3] == "<p>":
                 hold, eventWebsite = betweenthetag('p', eventWebsite)
+                eventWebsite = eventWebsite.strip()
                 save = save + hold
-                eventWebsite = eventWebsite.lstrip()
                 #eventWebsite = eventWebsite.lstrip('\r\n')
             addEventDetail(save)
 
@@ -176,9 +177,11 @@ def eventsfromnycparks():
             save = ""
             if '<p>' in eventWebsite:
                 save, eventWebsite = betweenthetag('p', eventWebsite)
-                addEventDetail(save)
+                save = combinedStrip(save)
+            addEventDetail(save)
                 #get the name of the coordinator
-                save, eventWebsite = betweenthetag('p', eventWebsite)
+            save = ""
+            save, eventWebsite = betweenthetag('p', eventWebsite)
             addEventDetail(save)
 
             #get the phone number of the coordinator
@@ -198,7 +201,7 @@ def eventsfromnycparks():
                 save = save.replace("&#x", "")
                 save = save.replace(";","")
                 save = save.replace('%', "")
-                print(save)
+                #print(save)
                 save = decode(decode(save, "hex"), 'ascii')
                 addEventDetail(save)
             else:
