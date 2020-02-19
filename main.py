@@ -1,12 +1,25 @@
-from flask import Flask, render_template, session
-
+from flask import Flask, render_template, session, request
+import eventFinder
 app = Flask(__name__, static_folder='./static', template_folder='./templates')
 
 app.config.update(TEMPLATES_AUTO_RELOAD=True)
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def home():
-  return render_template(
+    if request.method == "POST":
+        print('nycparks: ' + str(request.form.get('nycparks')))
+        print('all: ' + str(request.form.get('all')))
+        EventDates = []
+        #---- add more scraping programs
+        if request.form.get('all') == 'on':
+            EventDates = eventFinder.allevents()
+
+        if request.form.get('nycparks') == 'on':
+            EventDates.append(eventFinder.eventsfromnycparks())
+            print(EventDates[len(EventDates) - 1])
+
+
+    return render_template(
     'index.html'
   )
 
