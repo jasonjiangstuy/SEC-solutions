@@ -5,9 +5,10 @@ MVP
 
 2) add test for, if detail is present there, if there replace that item of list with "N/A"--2/17
 
-3) implement website to display info 
+3) implement website to display info
 
-    - build skelecton 
+    - build skeleton 2/18
+//add better tests for if detail is present
     - build storage of found events (pickling)
     - build button to rerun code
 
